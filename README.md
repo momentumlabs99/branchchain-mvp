@@ -37,50 +37,52 @@ No tightly coupled code.
 Each part does **one job only**.
 
 ---
+## 📂 Project Structure
 
+```text
 branchchain-mvp/
 │
-├── frontend/ # User interface (Dashboard)
-│ ├── pages/ # Each screen = one file
-│ │ ├── Login.js
-│ │ ├── Dashboard.js
-│ │ ├── CreateAccount.js
-│ │ ├── ResetPin.js
-│ │ ├── ReplaceCard.js
-│ │ ├── UpdateKYC.js
-│ │ └── AuditLog.js
-│ │
-│ ├── services/ # API calls only
-│ │ └── api.js
-│ │
-│ └── App.js
+├── frontend/                     # User interface (Dashboard)
+│   ├── pages/                    # Each screen = one file
+│   │   ├── Login.js
+│   │   ├── Dashboard.js
+│   │   ├── CreateAccount.js
+│   │   ├── ResetPin.js
+│   │   ├── ReplaceCard.js
+│   │   ├── UpdateKYC.js
+│   │   └── AuditLog.js
+│   │
+│   ├── services/                 # API calls only
+│   │   └── api.js
+│   │
+│   └── App.js
 │
-├── backend/ # API server
-│ ├── routes/ # One file per feature
-│ │ ├── auth.routes.js
-│ │ ├── accounts.routes.js
-│ │ ├── cards.routes.js
-│ │ ├── kyc.routes.js
-│ │ └── audit.routes.js
-│ │
-│ ├── controllers/ # Business logic only
-│ │ ├── accounts.controller.js
-│ │ ├── cards.controller.js
-│ │ ├── kyc.controller.js
-│ │ └── audit.controller.js
-│ │
-│ ├── services/ # External systems
-│ │ ├── db.service.js # Database logic
-│ │ └── ledger.service.js # Ledger (Fabric or simulated)
-│ │
-│ ├── models/ # Data schemas
-│ │ ├── Account.js
-│ │ ├── Card.js
-│ │ └── Customer.js
-│ │
-│ └── server.js
+├── backend/                      # API server
+│   ├── routes/                   # One file per feature
+│   │   ├── auth.routes.js
+│   │   ├── accounts.routes.js
+│   │   ├── cards.routes.js
+│   │   ├── kyc.routes.js
+│   │   └── audit.routes.js
+│   │
+│   ├── controllers/              # Business logic only
+│   │   ├── accounts.controller.js
+│   │   ├── cards.controller.js
+│   │   ├── kyc.controller.js
+│   │   └── audit.controller.js
+│   │
+│   ├── services/                 # External systems
+│   │   ├── db.service.js         # Database logic
+│   │   └── ledger.service.js     # Ledger (Fabric or simulated)
+│   │
+│   ├── models/                   # Data schemas
+│   │   ├── Account.js
+│   │   ├── Card.js
+│   │   └── Customer.js
+│   │
+│   └── server.js
 │
-├── docs/ # Diagrams, notes, meeting decisions
+├── docs/                         # Diagrams, notes, meeting decisions
 │
 └── README.md
 
