@@ -1,0 +1,138 @@
+# Fabric Test Network Docker Compose with CouchDB
+# Fabric Version: 2.5.9
+# CA Version: 1.5.7
+# CouchDB Version: 3.3
+
+version: '2'
+
+services:
+
+  # -----------------------------
+  # Peer0 Org1
+  # -----------------------------
+  peer0.org1.example.com:
+    container_name: peer0.org1.example.com
+    image: hyperledger/fabric-peer:2.5.9
+    labels:
+      service: hyperledger-fabric
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric_test
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0.org1.example.com:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=adminpw
+    volumes:
+      - ./docker/peercfg:/etc/hyperledger/peercfg
+      - ${DOCKER_SOCK}:/host/var/run/docker.sock
+    networks:
+      - fabric_test
+
+  # -----------------------------
+  # Peer0 Org2
+  # -----------------------------
+  peer0.org2.example.com:
+    container_name: peer0.org2.example.com
+    image: hyperledger/fabric-peer:2.5.9
+    labels:
+      service: hyperledger-fabric
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric_test
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0.org2.example.com:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=adminpw
+    volumes:
+      - ./docker/peercfg:/etc/hyperledger/peercfg
+      - ${DOCKER_SOCK}:/host/var/run/docker.sock
+    networks:
+      - fabric_test
+
+  # -----------------------------
+  # CouchDB Org1
+  # -----------------------------
+  couchdb0.org1.example.com:
+    container_name: couchdb0.org1.example.com
+    image: couchdb:3.3
+    labels:
+      service: hyperledger-fabric
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=adminpw
+    ports:
+      - "5984:5984"
+    networks:
+      - fabric_test
+
+  # -----------------------------
+  # CouchDB Org2
+  # -----------------------------
+  couchdb0.org2.example.com:
+    container_name: couchdb0.org2.example.com
+    image: couchdb:3.3
+    labels:
+      service: hyperledger-fabric
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=adminpw
+    ports:
+      - "6984:5984"
+    networks:
+      - fabric_test
+
+  # -----------------------------
+  # Orderer
+  # -----------------------------
+  orderer.example.com:
+    container_name: orderer.example.com
+    image: hyperledger/fabric-orderer:2.5.9
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=info
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+    volumes:
+      - ./docker/orderer:/var/hyperledger/orderer
+    networks:
+      - fabric_test
+
+  # -----------------------------
+  # Certificate Authorities
+  # -----------------------------
+  ca_org1:
+    container_name: ca_org1
+    image: hyperledger/fabric-ca:1.5.7
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org1
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+    ports:
+      - "7054:7054"
+    volumes:
+      - ./docker/ca/org1:/etc/hyperledger/fabric-ca-server
+    networks:
+      - fabric_test
+
+  ca_org2:
+    container_name: ca_org2
+    image: hyperledger/fabric-ca:1.5.7
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org2
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+    ports:
+      - "8054:7054"
+    volumes:
+      - ./docker/ca/org2:/etc/hyperledger/fabric-ca-server
+    networks:
+      - fabric_test
+
+# -----------------------------
+# Network definition
+# -----------------------------
+networks:
+  fabric_test:
+    external: false
