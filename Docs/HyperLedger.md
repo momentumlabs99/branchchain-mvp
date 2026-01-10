@@ -25,7 +25,10 @@ sudo apt-get install docker -y  # For Ubuntu/Debian
 # Clone the repo 
 git clone https://github.com/momentumlabs99/branchchain-mvp.git
 
-# Download Fabric binaries and config in the branchain-mvp
+#Delete current fabric-samples folder
+rm -f fabric-samples
+
+# Download Fabric binaries and config from hyperleedger
 curl -sSL https://bit.ly/2ysbOFE | bash -s 2.5.9 1.5.7
 
 # This will create a folder /fabric-samples
@@ -53,7 +56,9 @@ cryptogen version
 configtxgen version
 ```
 ## If succesful:
+
 ## Set-up Docker Containers peers, orderers, CAs and Couchdb
+
 ### REPLACE the docker-compose-test-net.yaml
 
 ```bash
@@ -204,6 +209,7 @@ networks:
 ```
 
 ## Save and Exit
+
 ## Setup Channels to emulate production
 ``` bash
  cd test-network/scripts
