@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import createAccount from "../api/accounts";
 
 const CreateAccount = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +11,9 @@ const CreateAccount = () => {
     accountType: "",
     deposit: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -18,10 +23,26 @@ const CreateAccount = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Create customer account:", formData);
-    // TODO: Implement account creation logic
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await createAccount(formData);
+      if (response.ok) {
+        const data = await response.json();
+        alert("Account created successfully!"); // later implement custom toast notification.
+        navigate("/dashboard");
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || "Failed to create account");
+      }
+    } catch (err) {
+      setError(err.message || "An error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -220,21 +241,30 @@ const CreateAccount = () => {
                 <button
                   className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
                   type="button"
+                  disabled={loading}
                 >
                   Cancel
                 </button>
                 <button
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-primary hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all shadow-sm hover:shadow flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-primary hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all shadow-sm hover:shadow flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   type="submit"
+                  disabled={loading}
                 >
                   <span className="material-symbols-outlined text-[18px]">
-                    check
+                    {loading ? "hourglass_empty" : "check"}
                   </span>
-                  Create Account
+                  {loading ? "Creating..." : "Create Account"}
                 </button>
               </div>
             </form>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 rounded-md bg-red-50 p-3">
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          )}
 
           {/* Helper Text */}
           <p className="text-center text-xs text-slate-400">

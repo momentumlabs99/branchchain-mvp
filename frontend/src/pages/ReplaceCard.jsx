@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AccountLookup from "../components/AccountLookup";
 
 const ReplaceCard = () => {
   const [searchAccount, setSearchAccount] = useState("");
@@ -15,29 +16,8 @@ const ReplaceCard = () => {
   const [replacementReason, setReplacementReason] = useState("");
   const [status, setStatus] = useState("");
 
-  // Mock card data - replace with actual API call
-  const mockCardData = {
-    11111111: {
-      accountNumber: "11111111",
-      customerName: "John Doe",
-      cardNumber: "**** **** **** 4242",
-      expiryDate: "12/24",
-      cardType: "VISA Debit",
-      status: "Active",
-    },
-  };
-
   const handleSearch = () => {
-    const card = mockCardData[searchAccount];
-
-    if (card) {
-      setCurrentCard(card);
-      setCardLoaded(true);
-      setStatus("");
-    } else {
-      setStatus("Account not found");
-      setCardLoaded(false);
-    }
+    // Handled by AccountLookup component
   };
 
   const handleReplaceCard = () => {
@@ -98,36 +78,25 @@ const ReplaceCard = () => {
         )}
 
         {/* Search Box */}
-        <div className="bg-white rounded border border-gray-200 p-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Account Number
-          </label>
-          <div className="flex gap-3">
-            <input
-              type="text"
-              value={searchAccount}
-              onChange={(e) => setSearchAccount(e.target.value)}
-              placeholder="Enter account number"
-              disabled={cardLoaded}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50"
-            />
-            {!cardLoaded ? (
-              <button
-                onClick={handleSearch}
-                className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                Search
-              </button>
-            ) : (
-              <button
-                onClick={handleReset}
-                className="px-6 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
-              >
-                New Search
-              </button>
-            )}
-          </div>
-        </div>
+        <AccountLookup
+          value={searchAccount}
+          onChange={setSearchAccount}
+          onResult={(result) => {
+            if (result) {
+              setCurrentCard(result);
+              setCardLoaded(true);
+              setStatus("");
+            } else {
+              setStatus("Account not found");
+              setCardLoaded(false);
+            }
+          }}
+          disabled={cardLoaded}
+          loaded={cardLoaded}
+          onReset={handleReset}
+          error={status === "Account not found" ? status : ""}
+          dataType="cards"
+        />
 
         {/* Card Replacement Form */}
         {cardLoaded && (

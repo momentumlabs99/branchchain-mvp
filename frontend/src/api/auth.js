@@ -6,6 +6,10 @@ export default function login(data) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+  }).then((res) => {
+    if (res.ok) return res.json();
+    throw new Error("Login failed");
+    // To Do: implement session storage
   });
 }
 

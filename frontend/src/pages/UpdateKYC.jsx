@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AccountLookup from "../components/AccountLookup";
 
 const UpdateKYC = () => {
   const [searchAccount, setSearchAccount] = useState("");
@@ -15,32 +16,8 @@ const UpdateKYC = () => {
   });
   const [status, setStatus] = useState("");
 
-  // Mock customer data - replace with actual API call
-  const mockCustomerData = {
-    11111111: {
-      accountNumber: "11111111",
-      customerName: "John Doe",
-      email: "john.doe@example.com",
-      phone: "+254712345678",
-      address: "123 mombasa rd",
-      city: "Mombasa",
-      state: "KZN",
-      zipCode: "10005",
-    },
-  };
-
   const handleSearch = () => {
-    // TODO: Replace with actual API call
-    const customer = mockCustomerData[searchAccount];
-
-    if (customer) {
-      setFormData(customer);
-      setCustomerLoaded(true);
-      setStatus("");
-    } else {
-      setStatus("Account not found");
-      setCustomerLoaded(false);
-    }
+    // Handled by AccountLookup component
   };
 
   const handleInputChange = (e) => {
@@ -100,36 +77,25 @@ const UpdateKYC = () => {
         )}
 
         {/* Search Box */}
-        <div className="bg-white rounded border border-gray-200 p-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Account Number
-          </label>
-          <div className="flex gap-3">
-            <input
-              type="text"
-              value={searchAccount}
-              onChange={(e) => setSearchAccount(e.target.value)}
-              placeholder="Enter account number"
-              disabled={customerLoaded}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50"
-            />
-            {!customerLoaded ? (
-              <button
-                onClick={handleSearch}
-                className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                Search
-              </button>
-            ) : (
-              <button
-                onClick={handleReset}
-                className="px-6 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
-              >
-                New Search
-              </button>
-            )}
-          </div>
-        </div>
+        <AccountLookup
+          value={searchAccount}
+          onChange={setSearchAccount}
+          onResult={(result) => {
+            if (result) {
+              setFormData(result);
+              setCustomerLoaded(true);
+              setStatus("");
+            } else {
+              setStatus("Account not found");
+              setCustomerLoaded(false);
+            }
+          }}
+          disabled={customerLoaded}
+          loaded={customerLoaded}
+          onReset={handleReset}
+          error={status === "Account not found" ? status : ""}
+          dataType="customers"
+        />
 
         {/* Customer Form - Only shows after search */}
         {customerLoaded && (
