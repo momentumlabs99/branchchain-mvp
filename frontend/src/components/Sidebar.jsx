@@ -42,6 +42,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, currentPage }) => {
                   : "text-[#616d89] hover:bg-[#f0f1f4] hover:text-[#111318]"
               }`}
               to="/dashboard"
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               <span
                 className="material-symbols-outlined"
@@ -65,6 +66,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, currentPage }) => {
                   : "text-[#616d89] hover:bg-[#f0f1f4] hover:text-[#111318]"
               }`}
               to="/create-account"
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               <span
                 className={`material-symbols-outlined ${
@@ -88,6 +90,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, currentPage }) => {
                   : "text-[#616d89] hover:bg-[#f0f1f4] hover:text-[#111318]"
               }`}
               to="/reset-pin"
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               <span
                 className={`material-symbols-outlined ${
@@ -111,6 +114,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, currentPage }) => {
                   : "text-[#616d89] hover:bg-[#f0f1f4] hover:text-[#111318]"
               }`}
               to="/update-kyc"
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               <span
                 className={`material-symbols-outlined ${
@@ -134,6 +138,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, currentPage }) => {
                   : "text-[#616d89] hover:bg-[#f0f1f4] hover:text-[#111318]"
               }`}
               to="/replace-card"
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               <span
                 className={`material-symbols-outlined ${
