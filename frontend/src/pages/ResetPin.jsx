@@ -87,7 +87,6 @@ const ResetPin = () => {
                 setLookupError("");
               }}
               error={lookupError}
-              dataType="customers"
             />
           </div>
 

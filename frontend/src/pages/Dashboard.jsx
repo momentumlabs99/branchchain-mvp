@@ -1,21 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AccountLookup from "../components/AccountLookup";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [accountNumber, setAccountNumber] = useState("");
   const [accountDetails, setAccountDetails] = useState(null);
-
-  // fake data lookup for demo, replace with actual API call later
-  const handleLookup = () => {
-    // demo: returns dummy data
-    const dummyData = {
-      "00000000": { name: "John Doe", balance: "$5,230.00", status: "Active" },
-      11111111: { name: "M. Silva", balance: "$1,200.00", status: "Active" },
-      22222222: { name: "J. Charana", balance: "$0.00", status: "Pending" },
-    };
-    setAccountDetails(dummyData[accountNumber] || null);
-  };
+  const [lookupError, setLookupError] = useState("");
 
   return (
     <>
@@ -113,23 +104,17 @@ const Dashboard = () => {
           <h3 className="text-lg font-bold text-[#111318]">Account Lookup</h3>
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Input Area */}
-            <div className="flex flex-col gap-2 w-full lg:w-1/3">
-              <label className="text-sm font-medium text-[#616d89]">
-                Enter Account Number
-              </label>
-              <input
-                type="text"
-                className="rounded-lg border border-[#dbdee6] bg-white px-3 py-2 text-sm focus:border-primary focus:ring focus:ring-primary/20"
+            <div className="w-full lg:w-1/2">
+              <AccountLookup
                 value={accountNumber}
-                onChange={(e) => setAccountNumber(e.target.value)}
-                placeholder="e.g., 9921-0032"
+                onChange={setAccountNumber}
+                onResult={(result) => {
+                  setAccountDetails(result);
+                  setLookupError(result ? "" : "Account not found");
+                }}
+                searchLabel="Lookup"
+                error={lookupError}
               />
-              <button
-                onClick={handleLookup}
-                className="mt-2 rounded-lg bg-primary px-4 py-2 text-white hover:bg-primary/90"
-              >
-                Lookup
-              </button>
             </div>
 
             {/* Details Area */}

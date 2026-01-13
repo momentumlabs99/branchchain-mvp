@@ -10,48 +10,56 @@ const AccountLookup = ({
   resetLabel = "New Search",
   searchLabel = "Search",
   error,
-  dataType = "customers",
 }) => {
   // Mock data - centralized here
   const mockData = {
-    customers: {
-      1234567890: {
-        name: "Sarah Jenkins",
-        accountType: "Savings",
-        status: "Active",
-        phone: "***-***-9921",
-      },
-      9876543210: {
-        name: "Michael Brown",
-        accountType: "Checking",
-        status: "Active",
-        phone: "***-***-4402",
-      },
-      1111111111: {
-        accountNumber: "1111111111",
-        customerName: "John Doe",
-        email: "john.doe@example.com",
-        phone: "+254712345678",
-        address: "123 mombasa rd",
-        city: "Mombasa",
-        state: "KZN",
-        zipCode: "10005",
-      },
+    1234567890: {
+      name: "Sarah Jenkins",
+      accountType: "Savings",
+      status: "Active",
+      phone: "***-***-9921",
     },
-    cards: {
-      1111111111: {
-        accountNumber: "1111111111",
-        customerName: "John Doe",
-        cardNumber: "**** **** **** 4242",
-        expiryDate: "12/24",
-        cardType: "VISA Debit",
-        status: "Active",
-      },
+    9876543210: {
+      name: "Michael Brown",
+      accountType: "Checking",
+      status: "Active",
+      phone: "***-***-4402",
+    },
+    1111111111: {
+      name: "John Doe",
+      accountType: "Savings",
+      status: "Active",
+      phone: "+254712345678",
+      accountNumber: "1111111111",
+      customerName: "John Doe",
+      email: "john.doe@example.com",
+      address: "123 mombasa rd",
+      city: "Mombasa",
+      state: "KZN",
+      zipCode: "10005",
+      cardNumber: "**** **** **** 4242",
+      expiryDate: "12/24",
+      cardType: "VISA Debit",
+      balance: "$5,230.00",
+    },
+    2222222222: {
+      name: "M. Silva",
+      accountType: "Checking",
+      status: "Active",
+      phone: "***-***-4402",
+      balance: "$1,200.00",
+    },
+    3333333333: {
+      name: "J. Charana",
+      accountType: "Savings",
+      status: "Pending",
+      phone: "***-***-1234",
+      balance: "$0.00",
     },
   };
 
   const handleSearch = () => {
-    const result = mockData[dataType][value];
+    const result = mockData[value];
     onResult(result);
   };
   return (
@@ -71,14 +79,14 @@ const AccountLookup = ({
         {!loaded ? (
           <button
             onClick={handleSearch}
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 whitespace-nowrap"
           >
             {searchLabel}
           </button>
         ) : (
           <button
             onClick={onReset}
-            className="px-6 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 whitespace-nowrap"
           >
             {resetLabel}
           </button>

@@ -94,7 +94,6 @@ const UpdateKYC = () => {
           loaded={customerLoaded}
           onReset={handleReset}
           error={status === "Account not found" ? status : ""}
-          dataType="customers"
         />
 
         {/* Customer Form - Only shows after search */}

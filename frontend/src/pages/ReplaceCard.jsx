@@ -95,7 +95,6 @@ const ReplaceCard = () => {
           loaded={cardLoaded}
           onReset={handleReset}
           error={status === "Account not found" ? status : ""}
-          dataType="cards"
         />
 
         {/* Card Replacement Form */}
