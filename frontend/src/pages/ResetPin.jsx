@@ -28,7 +28,7 @@ const ResetPin = () => {
 
     try {
       const response = await resetPin(accountNumber, newPin);
-      if (response.ok) {
+      if (response.status === 200) {
         alert("PIN reset successful!");
         // Reset form
         setAccountNumber("");
@@ -37,8 +37,7 @@ const ResetPin = () => {
         setNewPin("");
         setConfirmPin("");
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || "Failed to reset PIN");
+        setError(response.data?.message || "Failed to reset PIN");
       }
     } catch (err) {
       setError(err.message || "An error occurred");
