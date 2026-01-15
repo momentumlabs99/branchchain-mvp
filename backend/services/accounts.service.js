@@ -1,5 +1,6 @@
 const Account = require("../models/Account");
 const dbService = require("./db.service");
+const customersService = require("./customers.service");
 
 /**
  * Create new account
@@ -34,16 +35,48 @@ async function resetPin(accountId, newPin) {
 }
 
 /**
- * Get account by ID
+ * Get account by ID with customer data
  * @param {string} accountId - Account ID
- * @returns {Promise<object>} Account
+ * @returns {Promise<object>} Account with customer data
  */
 async function getAccountById(accountId) {
-  return dbService.findById("accounts", accountId);
+  const account = await dbService.findById("accounts", accountId);
+  
+  if (!account) {
+    throw new Error("Account not found");
+  }
+  
+  // Get customer data
+  const customer = await customersService.getCustomerById(account.customerId);
+  
+  // Combine account and customer data
+  return {
+    ...account,
+    customer: customer
+  };
+}
+
+/**
+ * Get all accounts
+ * @returns {Promise<array>} All accounts
+ */
+async function getAllAccounts() {
+  return dbService.findAll("accounts");
+}
+
+/**
+ * Search account by account number (same as ID)
+ * @param {string} accountNumber - Account number
+ * @returns {Promise<object>} Account with customer data
+ */
+async function searchByAccountNumber(accountNumber) {
+  return getAccountById(accountNumber);
 }
 
 module.exports = {
   createAccount,
   resetPin,
   getAccountById,
+  getAllAccounts,
+  searchByAccountNumber,
 };
