@@ -28,11 +28,9 @@ export async function logout(navigate) {
   try {
     await axios.post(`${API_URL}/api/auth/logout`);
 
-    // clear local storage
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    // redirect
     navigate("/login");
   } catch (error) {
     console.error(error.response?.data || error.message);
