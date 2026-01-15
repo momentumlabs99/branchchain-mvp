@@ -1,5 +1,6 @@
 const authService = require("../services/auth.service");
 const ledgerService = require("../services/ledger.service");
+const jwtService = require("../services/jwt.service");
 const { success, error } = require("../utils/response.util");
 
 /**
@@ -21,6 +22,13 @@ async function login(req, res) {
       return error(res, "Invalid credentials", 401);
     }
 
+    // Generate JWT token
+    const token = jwtService.generateToken({
+      id: staff.id,
+      branchId: staff.branchId,
+      role: staff.role,
+    });
+
     // Record login to ledger
     //await ledgerService.recordTransaction("STAFF_LOGIN", {
     //  staffId: staff.id,
@@ -28,12 +36,15 @@ async function login(req, res) {
     //  branchId: staff.branchId,
     //});
 
-    // Return staff data (without password)
+    // Return staff data with token
     return success(res, {
-      id: staff.id,
-      name: staff.name,
-      branchId: staff.branchId,
-      role: staff.role,
+      token,
+      staff: {
+        id: staff.id,
+        name: staff.name,
+        branchId: staff.branchId,
+        role: staff.role,
+      },
     });
 
   } catch (err) {
