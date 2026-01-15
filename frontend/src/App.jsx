@@ -13,8 +13,6 @@ import UpdateKYC from "./pages/UpdateKYC";
 import AuditLog from "./pages/AuditLog";
 import Layout from "./components/Layout";
 
-const API_URL = "/";
-
 function App() {
   return (
     <Router>
@@ -35,4 +33,3 @@ function App() {
 }
 
 export default App;
-export { API_URL };

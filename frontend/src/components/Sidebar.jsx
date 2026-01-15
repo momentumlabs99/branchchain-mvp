@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { logout } from "../api/auth";
 
 const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, currentPage }) => {
+  const navigate = useNavigate();
   return (
     <aside
       className={`${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} fixed inset-y-0 left-0 z-50 w-64 flex-col border-r border-[#dbdee6] bg-white transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:flex min-h-screen`}
@@ -177,15 +179,15 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, currentPage }) => {
             </span>
             <span className="text-sm font-medium">Profile</span>
           </a>
-          <Link
-            className="group flex items-center gap-3 rounded-lg px-3 py-2 text-[#616d89] hover:bg-[#f0f1f4] hover:text-[#111318] transition-colors"
-            to="/"
+          <button
+            className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[#616d89] hover:bg-[#f0f1f4] hover:text-[#111318] transition-colors"
+            onClick={() => logout(navigate)}
           >
             <span className="material-symbols-outlined text-[#616d89] group-hover:text-[#111318]">
               logout
             </span>
             <span className="text-sm font-medium">Sign Out</span>
-          </Link>
+          </button>
         </div>
       </div>
     </aside>

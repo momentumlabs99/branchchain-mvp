@@ -1,29 +1,38 @@
-import { useNavigate } from "react-router-dom";
-export default function login(data) {
-  return fetch("/api/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  }).then((res) => {
-    if (res.ok) return res.json();
-    throw new Error("Login failed");
-    // To Do: implement session storage
-  });
+import axios from "axios";
+import API_URL from "./api";
+
+// LOGIN
+export default async function login(data) {
+  try {
+    const res = await axios.post(`${API_URL}/api/auth/login`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = res.data;
+
+    // store token
+    localStorage.setItem("token", result.token);
+
+    return result;
+  } catch (error) {
+    const message = error.response?.data?.message || "Login failed";
+    throw new Error(message);
+  }
 }
 
+// LOGOUT
 export async function logout(navigate) {
   try {
-    const res = await fetch("/api/auth/logout", { method: "POST" });
-    if (!res.ok) throw new Error("Logout failed");
+    await axios.post(`${API_URL}/api/auth/logout`);
 
-    // clear local stuff from browser
+    // clear local storage
     localStorage.removeItem("token");
 
     // redirect
     navigate("/login");
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error.response?.data || error.message);
   }
 }

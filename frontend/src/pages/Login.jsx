@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import login from "../api/auth";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     staffId: "",
-    branch: "",
     password: "",
-    rememberMe: false,
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -19,10 +20,22 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login attempt:", formData);
-    navigate("/dashboard");
+    setError("");
+    setLoading(true);
+
+    try {
+      await login({
+        staffId: formData.staffId,
+        password: formData.password,
+      });
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -87,6 +100,22 @@ const Login = () => {
             </p>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div className="rounded-md bg-red-50 p-3">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <span className="material-symbols-outlined text-red-600 text-[20px]">
+                    error
+                  </span>
+                </div>
+                <div className="ml-3 flex-1">
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Form Inputs */}
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <div className="space-y-5">
@@ -113,38 +142,6 @@ const Login = () => {
                     placeholder="Ex: STF-8821"
                     className="block w-full rounded-md border-0 py-3 pl-10 text-slate-900 ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
                   />
-                </div>
-              </div>
-
-              {/* Branch Selection */}
-              <div>
-                <label
-                  htmlFor="branch"
-                  className="block text-sm font-medium leading-6 text-slate-900"
-                >
-                  Branch Location
-                </label>
-                <div className="relative mt-2 rounded-md shadow-sm">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <span className="material-symbols-outlined text-slate-400 text-[20px]">
-                      store
-                    </span>
-                  </div>
-                  <select
-                    name="branch"
-                    id="branch"
-                    value={formData.branch}
-                    onChange={handleInputChange}
-                    className="block w-full rounded-md border-0 py-3 pl-10 text-slate-900 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
-                  >
-                    <option value="">Select Branch...</option>
-                    <option value="NRB-001">Nairobi - HQ (NRB-001)</option>
-                    <option value="MSA-042">
-                      Mombasa - Port City (MSA-042)
-                    </option>
-                    <option value="KSM-089">Kisumu - Lakeside (KSM-089)</option>
-                    <option value="NKR-156">Nakuru - Central (NKR-156)</option>
-                  </select>
                 </div>
               </div>
 
@@ -185,23 +182,7 @@ const Login = () => {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="rememberMe"
-                  id="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={handleInputChange}
-                  className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
-                />
-                <label
-                  htmlFor="rememberMe"
-                  className="ml-2 block text-sm text-slate-900"
-                >
-                  Remember device
-                </label>
-              </div>
+            <div className="flex items-center justify-end">
               <div className="text-sm">
                 <button
                   type="button"
@@ -217,9 +198,10 @@ const Login = () => {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-primary px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors"
+                disabled={loading}
+                className="flex w-full justify-center rounded-md bg-primary px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Log in
+                {loading ? "Logging in..." : "Log in"}
               </button>
             </div>
 
