@@ -1,6 +1,10 @@
-export default function resetPin(accountId, newPin) {
+import axios from "axios";
+import API_URL from "./api";
+
+export default async function resetPin(accountId, newPin) {
+  const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
-  if (!user) {
+  if (!token || !user) {
     throw new Error("User not logged in");
   }
 
@@ -11,11 +15,17 @@ export default function resetPin(accountId, newPin) {
     branchId: user.branchId,
   };
 
-  return fetch("/api/accounts/reset-pin", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const res = await axios.post(`${API_URL}/api/accounts/reset-pin`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res;
+  } catch (error) {
+    const message = error.response?.data?.error || "PIN reset failed";
+    throw new Error(message);
+  }
 }

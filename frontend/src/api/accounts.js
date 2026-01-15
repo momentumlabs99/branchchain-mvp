@@ -1,6 +1,27 @@
 import axios from "axios";
 import API_URL from "./api";
 
+export async function searchAccount(accountNumber) {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("User not logged in");
+    }
+
+    const res = await axios.get(`${API_URL}/api/accounts/search`, {
+      params: { accountNumber },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.data.data;
+  } catch (error) {
+    const message = error.response?.data?.error || "Account search failed";
+    throw new Error(message);
+  }
+}
+
 export default async function createAccount(data) {
   try {
     const token = localStorage.getItem("token");

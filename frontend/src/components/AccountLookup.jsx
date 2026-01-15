@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { searchAccount } from "../api/accounts";
+
 const AccountLookup = ({
   value,
   onChange,
@@ -11,56 +14,37 @@ const AccountLookup = ({
   searchLabel = "Search",
   error,
 }) => {
-  // Mock data - centralized here
-  const mockData = {
-    1234567890: {
-      name: "Sarah Jenkins",
-      accountType: "Savings",
-      status: "Active",
-      phone: "***-***-9921",
-    },
-    9876543210: {
-      name: "Michael Brown",
-      accountType: "Checking",
-      status: "Active",
-      phone: "***-***-4402",
-    },
-    1111111111: {
-      name: "John Doe",
-      accountType: "Savings",
-      status: "Active",
-      phone: "+254712345678",
-      accountNumber: "1111111111",
-      customerName: "John Doe",
-      email: "john.doe@example.com",
-      address: "123 mombasa rd",
-      city: "Mombasa",
-      state: "KZN",
-      zipCode: "10005",
-      cardNumber: "**** **** **** 4242",
-      expiryDate: "12/24",
-      cardType: "VISA Debit",
-      balance: "$5,230.00",
-    },
-    2222222222: {
-      name: "M. Silva",
-      accountType: "Checking",
-      status: "Active",
-      phone: "***-***-4402",
-      balance: "$1,200.00",
-    },
-    3333333333: {
-      name: "J. Charana",
-      accountType: "Savings",
-      status: "Pending",
-      phone: "***-***-1234",
-      balance: "$0.00",
-    },
-  };
+  const [loading, setLoading] = useState(false);
+  const [searchError, setSearchError] = useState("");
 
-  const handleSearch = () => {
-    const result = mockData[value];
-    onResult(result);
+  const handleSearch = async () => {
+    setLoading(true);
+    setSearchError("");
+    try {
+      const data = await searchAccount(value);
+      // Transform the data to match expected structure
+      const transformed = {
+        name: `${data.customer.firstName} ${data.customer.lastName}`,
+        accountType: data.accountType,
+        status: data.status,
+        phone: data.customer.phone,
+        accountNumber: data.id,
+        customerName: `${data.customer.firstName} ${data.customer.lastName}`,
+        email: data.customer.email,
+        address: data.customer.address.street,
+        city: data.customer.address.city,
+        state: data.customer.address.state,
+        zipCode: data.customer.address.zipCode,
+        balance: `$${data.balance.toFixed(2)}`,
+        // Add other fields if needed, but not all are available
+      };
+      onResult(transformed);
+    } catch (err) {
+      setSearchError(err.message);
+      onResult(null);
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <div className="bg-white rounded border border-gray-200 p-6">
@@ -79,9 +63,10 @@ const AccountLookup = ({
         {!loaded ? (
           <button
             onClick={handleSearch}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 whitespace-nowrap"
+            disabled={loading}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 whitespace-nowrap"
           >
-            {searchLabel}
+            {loading ? "Searching..." : searchLabel}
           </button>
         ) : (
           <button
@@ -92,7 +77,9 @@ const AccountLookup = ({
           </button>
         )}
       </div>
-      {error && <p className="text-sm text-red-500 mt-3">{error}</p>}
+      {(error || searchError) && (
+        <p className="text-sm text-red-500 mt-3">{error || searchError}</p>
+      )}
     </div>
   );
 };
