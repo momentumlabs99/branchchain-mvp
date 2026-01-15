@@ -10,14 +10,15 @@ export default async function login(data) {
       },
     });
 
-    const result = res.data;
+    const result = res.data.data; // Access the nested data object
 
-    // store token
+    // store token and user data
     localStorage.setItem("token", result.token);
+    localStorage.setItem("user", JSON.stringify(result.staff));
 
     return result;
   } catch (error) {
-    const message = error.response?.data?.message || "Login failed";
+    const message = error.response?.data?.error || "Login failed";
     throw new Error(message);
   }
 }
@@ -29,6 +30,7 @@ export async function logout(navigate) {
 
     // clear local storage
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
 
     // redirect
     navigate("/login");

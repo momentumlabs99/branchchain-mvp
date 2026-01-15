@@ -1,30 +1,40 @@
-export default function createAccount(data) {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user) {
-    throw new Error("User not logged in");
+import axios from "axios";
+import API_URL from "./api";
+
+export default async function createAccount(data) {
+  try {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      throw new Error("User not logged in");
+    }
+
+    const accountTypeMapping = {
+      checking: "CURRENT",
+      savings: "SAVINGS",
+      investment: "INVESTMENT",
+      business: "BUSINESS",
+    };
+
+    const payload = {
+      customerId: data.customerId,
+      accountType:
+        accountTypeMapping[data.accountType] || data.accountType.toUpperCase(),
+      initialDeposit: parseFloat(data.initialDeposit) || 0,
+      staffId: user.id,
+      branchId: user.branchId,
+    };
+
+    const res = await axios.post(`${API_URL}/api/accounts/create`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.data.data;
+  } catch (error) {
+    const message = error.response?.data?.error || "Account creation failed";
+    throw new Error(message);
   }
-
-  const accountTypeMapping = {
-    checking: "CURRENT",
-    savings: "SAVINGS",
-    investment: "INVESTMENT",
-    business: "BUSINESS",
-  };
-
-  const payload = {
-    customerId: data.nationalId, // Using nationalId as customerId
-    accountType:
-      accountTypeMapping[data.accountType] || data.accountType.toUpperCase(),
-    initialDeposit: parseFloat(data.deposit) || 0,
-    staffId: user.id,
-    branchId: user.branchId,
-  };
-
-  return fetch("/api/accounts/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
 }

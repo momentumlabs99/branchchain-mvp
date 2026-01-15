@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import createAccount from "../api/accounts";
+import { createCustomer } from "../api/customers";
 
 const CreateAccount = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,8 @@ const CreateAccount = () => {
     nationalId: "",
     phone: "",
     email: "",
+    dateOfBirth: "",
+    address: "",
     accountType: "",
     deposit: "",
   });
@@ -29,17 +32,48 @@ const CreateAccount = () => {
     setError("");
 
     try {
-      const response = await createAccount(formData);
-      if (response.ok) {
-        const data = await response.json();
-        alert("Account created successfully!"); // later implement custom toast notification.
-        navigate("/dashboard");
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || "Failed to create account");
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user) {
+        throw new Error("User not logged in");
       }
+
+      // Split full name
+      const [firstName, ...lastNameParts] = formData.fullName.trim().split(" ");
+      const lastName = lastNameParts.join(" ") || "";
+
+      // Prepare customer data
+      const customerData = {
+        firstName,
+        lastName,
+        email: formData.email,
+        phone: formData.phone,
+        dateOfBirth: formData.dateOfBirth || null,
+        address: {
+          street: formData.address || "",
+          city: "",
+          state: "",
+          zipCode: "",
+        },
+        branchId: user.branchId,
+      };
+
+      // Create customer
+      const customer = await createCustomer(customerData);
+
+      // Prepare account data
+      const accountData = {
+        customerId: customer.id,
+        accountType: formData.accountType,
+        initialDeposit: parseFloat(formData.deposit) || 0,
+      };
+
+      // Create account
+      await createAccount(accountData);
+
+      alert("Account created successfully!");
+      navigate("/dashboard");
     } catch (err) {
-      setError(err.message || "An error occurred");
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -143,6 +177,29 @@ const CreateAccount = () => {
                       />
                     </div>
                   </div>
+                  <div className="col-span-1 space-y-2">
+                    <label
+                      className="block text-sm font-medium text-slate-700"
+                      htmlFor="dateOfBirth"
+                    >
+                      Date of Birth
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span className="material-symbols-outlined text-slate-400 text-lg">
+                          calendar_today
+                        </span>
+                      </div>
+                      <input
+                        className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-lg text-slate-900 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm transition-shadow"
+                        id="dateOfBirth"
+                        name="dateOfBirth"
+                        type="date"
+                        value={formData.dateOfBirth}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </div>
                   <div className="col-span-1 lg:col-span-2 space-y-2">
                     <label
                       className="block text-sm font-medium text-slate-700"
@@ -163,6 +220,30 @@ const CreateAccount = () => {
                         placeholder="client@example.com"
                         type="email"
                         value={formData.email}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-span-1 lg:col-span-2 space-y-2">
+                    <label
+                      className="block text-sm font-medium text-slate-700"
+                      htmlFor="address"
+                    >
+                      Address
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span className="material-symbols-outlined text-slate-400 text-lg">
+                          location_on
+                        </span>
+                      </div>
+                      <input
+                        className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-lg text-slate-900 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm transition-shadow"
+                        id="address"
+                        name="address"
+                        placeholder="Street address"
+                        type="text"
+                        value={formData.address}
                         onChange={handleInputChange}
                       />
                     </div>
