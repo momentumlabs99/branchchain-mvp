@@ -24,7 +24,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=adminpw
     volumes:
       - ./docker/peercfg:/etc/hyperledger/peercfg
-      - ${DOCKER_SOCK}:/host/var/run/docker.sock
+      - /var/run/docker.sock:/host/var/run/docker.sock
     networks:
       - fabric_test
 
@@ -45,7 +45,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=adminpw
     volumes:
       - ./docker/peercfg:/etc/hyperledger/peercfg
-      - ${DOCKER_SOCK}:/host/var/run/docker.sock
+      - /var/run/docker.sock:/host/var/run/docker.sock
     networks:
       - fabric_test
 
@@ -135,4 +135,4 @@ services:
 # -----------------------------
 networks:
   fabric_test:
-    external: false
+    driver: bridge
