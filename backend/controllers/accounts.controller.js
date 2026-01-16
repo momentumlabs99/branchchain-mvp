@@ -1,5 +1,5 @@
 const accountsService = require("../services/accounts.service");
-const ledgerService = require("../services/ledger.service");
+const ledgerService = require("../services/ledger-gateway.service"); // ← Changed to new service
 const { success, error } = require("../utils/response.util");
 
 /**
@@ -14,7 +14,7 @@ async function createAccount(req, res) {
       return error(res, "Missing required fields", 400);
     }
 
-    // Create account
+    // Create account in database
     const account = await accountsService.createAccount({
       customerId,
       accountType,
@@ -23,19 +23,23 @@ async function createAccount(req, res) {
       branchId,
     });
 
-    // Record to ledger
-    //await ledgerService.recordTransaction("CREATE_ACCOUNT", {
-    //  accountId: account.id,
-    //  customerId,
-    //  accountType,
-    //  initialDeposit,
-    //  staffId,
-    //  branchId,
-    //});
+    // Record to ledger using Gateway API
+    const transactionId = await ledgerService.recordTransaction("CREATE_ACCOUNT", {
+      accountId: account.id,
+      customerId,
+      accountType,
+      initialDeposit,
+      staffId,
+      branchId,
+    });
 
-    return success(res, account, 201);
+    return success(res, {
+      account,
+      transactionId, // Return transaction ID for tracking
+    }, 201);
 
   } catch (err) {
+    console.error('Error in createAccount:', err);
     return error(res, err.message, 500);
   }
 }
@@ -52,19 +56,24 @@ async function resetPin(req, res) {
       return error(res, "Missing required fields", 400);
     }
 
-    // Reset PIN
+    // Reset PIN in database
     await accountsService.resetPin(accountId, newPin);
 
-    // Record to ledger
-    //await ledgerService.recordTransaction("RESET_PIN", {
-    //  accountId,
-    //  staffId,
-    //  branchId,
-    //});
+    // Record to ledger using Gateway API
+    const transactionId = await ledgerService.recordTransaction("RESET_PIN", {
+      accountId,
+      staffId,
+      branchId,
+      timestamp: new Date().toISOString(),
+    });
 
-    return success(res, { message: "PIN reset successful" });
+    return success(res, {
+      message: "PIN reset successful",
+      transactionId,
+    });
 
   } catch (err) {
+    console.error('Error in resetPin:', err);
     return error(res, err.message, 500);
   }
 }
