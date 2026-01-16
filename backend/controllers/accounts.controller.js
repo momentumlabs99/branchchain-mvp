@@ -78,7 +78,57 @@ async function resetPin(req, res) {
   }
 }
 
+/**
+ * Get account by ID
+ */
+async function getAccount(req, res) {
+  try {
+    const { accountId } = req.params;
+
+    const account = await accountsService.getAccountById(accountId);
+    return success(res, account);
+
+  } catch (err) {
+    return error(res, err.message, 404);
+  }
+}
+
+/**
+ * Get all accounts
+ */
+async function getAllAccounts(req, res) {
+  try {
+    const accounts = await accountsService.getAllAccounts();
+    return success(res, accounts);
+
+  } catch (err) {
+    return error(res, err.message, 500);
+  }
+}
+
+/**
+ * Search account by account number
+ */
+async function searchAccount(req, res) {
+  try {
+    const { accountNumber } = req.query;
+
+    if (!accountNumber) {
+      return error(res, "Account number required", 400);
+    }
+
+    const accountWithCustomer = await accountsService.searchByAccountNumber(accountNumber);
+    return success(res, accountWithCustomer);
+
+  } catch (err) {
+    return error(res, err.message, 404);
+  }
+}
+
 module.exports = {
   createAccount,
   resetPin,
+  getAccount,
+  getAllAccounts,
+  searchAccount,
 };
