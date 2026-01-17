@@ -1,34 +1,30 @@
-const path = require("path");
+require("dotenv").config();
 
 module.exports = {
+  // CouchDB Configuration
+  couchdb: {
+    url: process.env.COUCHDB_URL || "http://admin:adminpw@localhost:5984",
+    databases: {
+      accounts: "accounts",
+      cards: "cards",
+      customers: "customers",
+    },
+  },
+
   // Network configuration
-  channelName: "mychannel",
-  chaincodeName: "basic",
-  
+  channelName: process.env.CHANNEL_NAME || "mychannel",
+  chaincodeName: process.env.CHAINCODE_NAME || "basic",
+
   // Organization identity
-  mspId: "Org1MSP",
-  
-  // Peer configuration
-  peerEndpoint: "localhost:7051",
-  peerHostAlias: "peer0.org1.example.com",
-  
+  mspId: process.env.MSP_ID || "Org1MSP",
+
   // Paths to crypto materials
-  cryptoPath: path.resolve(
-    __dirname,
-    "../../fabric-samples/test-network/organizations/peerOrganizations/org1.example.com"
-  ),
-  
-  // User crypto materials (User1 is created by default when network starts with -ca)
-  userCertPath: path.resolve(
-    __dirname,
-    "../../fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts"
-  ),
-  userKeyPath: path.resolve(
-    __dirname,
-    "../../fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore"
-  ),
-  peerTlsCertPath: path.resolve(
-    __dirname,
-    "../../fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
-  ),
+  cryptoPath: process.env.CRYPTO_PATH || path.resolve(__dirname, "../../fabric-samples/test-network/organizations/peerOrganizations/org1.example.com"),
+  userCertPath: process.env.USER_CERT_PATH || path.resolve(__dirname, "../../fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts"),
+  userKeyPath: process.env.USER_KEY_PATH || path.resolve(__dirname, "../../fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore"),
+  peerTlsCertPath: process.env.PEER_TLS_CERT_PATH || path.resolve(__dirname, "../../fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"),
+
+  // Peer configuration
+  peerEndpoint: process.env.PEER_ENDPOINT || "localhost:7051",
+  peerHostAlias: process.env.PEER_HOST_ALIAS || "peer0.org1.example.com",
 };

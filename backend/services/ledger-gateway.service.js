@@ -16,19 +16,16 @@ const utf8Decoder = new TextDecoder();
  */
 async function newGrpcConnection() {
   // Load peer TLS certificate
-  const tlsCertPath = path.resolve(
-    __dirname,
-    '../../fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt'
-  );
+  const tlsCertPath = config.peerTlsCertPath;
   
   const tlsRootCert = await fs.readFile(tlsCertPath);
   const tlsCredentials = grpc.credentials.createSsl(tlsRootCert);
   
   return new grpc.Client(
-    config.peerEndpoint || 'localhost:7051',
+    config.peerEndpoint,
     tlsCredentials,
     {
-      'grpc.ssl_target_name_override': config.peerHostAlias || 'peer0.org1.example.com',
+      'grpc.ssl_target_name_override': config.peerHostAlias,
     }
   );
 }
@@ -39,17 +36,14 @@ async function newGrpcConnection() {
  */
 async function newIdentity() {
   // Load user certificate
-  const certDirectoryPath = path.resolve(
-    __dirname,
-    '../../fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts'
-  );
+  const certDirectoryPath = config.userCertPath;
   
   const files = await fs.readdir(certDirectoryPath);
   const certPath = path.join(certDirectoryPath, files[0]);
   const credentials = await fs.readFile(certPath);
   
   return {
-    mspId: config.mspId || 'Org1MSP',
+    mspId: config.mspId,
     credentials,
   };
 }
@@ -60,10 +54,7 @@ async function newIdentity() {
  */
 async function newSigner() {
   // Load private key
-  const keyDirectoryPath = path.resolve(
-    __dirname,
-    '../../fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore'
-  );
+  const keyDirectoryPath = config.userKeyPath;
   
   const files = await fs.readdir(keyDirectoryPath);
   const keyPath = path.join(keyDirectoryPath, files[0]);
@@ -119,12 +110,9 @@ async function recordTransaction(action, data) {
     
     // Submit transaction to chaincode
     await contract.submitTransaction(
-      'CreateAsset',
-      assetId,
-      data.customerId || 'unknown',
-      data.accountType || 'unknown',
-      data.initialDeposit || '0',
-      data.staffId || 'system'
+      'RecordOperation',
+      action,
+      JSON.stringify(data)
     );
 
     console.log(`*** Transaction committed successfully: ${assetId}`);
@@ -149,12 +137,12 @@ async function queryTransactions() {
   const contract = await getContract();
   
   try {
-    console.log('--> Evaluate Transaction: GetAllAssets');
-    const resultBytes = await contract.evaluateTransaction('GetAllAssets');
+    console.log('--> Evaluate Transaction: GetAllOperations');
+    const resultBytes = await contract.evaluateTransaction('GetAllOperations');
     const resultJson = utf8Decoder.decode(resultBytes);
     const result = JSON.parse(resultJson);
     
-    console.log(`*** Result: ${result.length} transactions found`);
+    console.log(`*** Result: ${result.length} operations found`);
     return result;
 
   } finally {
@@ -173,12 +161,12 @@ async function queryTransactions() {
  * @param {string} assetId - Asset/Transaction ID
  * @returns {Promise<object>} Transaction details
  */
-async function queryTransactionById(assetId) {
+async function queryTransactionById(txId) {
   const contract = await getContract();
   
   try {
-    console.log(`--> Evaluate Transaction: ReadAsset for ${assetId}`);
-    const resultBytes = await contract.evaluateTransaction('ReadAsset', assetId);
+    console.log(`--> Evaluate Transaction: QueryOperation for ${txId}`);
+    const resultBytes = await contract.evaluateTransaction('QueryOperation', txId);
     const resultJson = utf8Decoder.decode(resultBytes);
     const result = JSON.parse(resultJson);
     

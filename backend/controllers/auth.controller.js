@@ -1,5 +1,5 @@
 const authService = require("../services/auth.service");
-const ledgerService = require("../services/ledger.service");
+const ledgerService = require("../services/ledger-gateway.service");
 const jwtService = require("../services/jwt.service");
 const { success, error } = require("../utils/response.util");
 
@@ -30,11 +30,11 @@ async function login(req, res) {
     });
 
     // Record login to ledger
-    //await ledgerService.recordTransaction("STAFF_LOGIN", {
-    //  staffId: staff.id,
-    //  staffName: staff.name,
-    //  branchId: staff.branchId,
-    //});
+    await ledgerService.recordTransaction("STAFF_LOGIN", {
+      staffId: staff.id,
+      staffName: staff.name,
+      branchId: staff.branchId,
+    });
 
     // Return staff data with token
     return success(res, {
