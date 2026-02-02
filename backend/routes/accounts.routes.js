@@ -6,6 +6,7 @@ const { authenticate } = require("../middleware/auth.middleware");
 // Protected routes - require authentication
 router.post("/create", authenticate, accountsController.createAccount);
 router.post("/reset-pin", authenticate, accountsController.resetPin);
+router.post("/transfer", authenticate, accountsController.transferFunds);
 router.get("/search", authenticate, accountsController.searchAccount);
 router.get("/:accountId", authenticate, accountsController.getAccount);
 router.get("/", authenticate, accountsController.getAllAccounts);

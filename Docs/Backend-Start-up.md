@@ -4,7 +4,6 @@
 # ========================================
 # Step 1: Start Fabric Network with CA
 # ========================================
-cd /home/ham/Documents/PROJECTS/Momentum\ Labs/branchchain-mvp/fabric-samples/test-network
 
 # Start network with Certificate Authorities
 # This creates User1 identity automatically
@@ -27,7 +26,10 @@ docker ps
 # ========================================
 
 # Deploy the basic chaincode to the channel
-./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go
+cd branchchain-mvp/chaincode
+npm install
+cd path/to/fabric-samples/test-network
+./network.sh deployCC -ccn basic -ccp ../../branchchain-mvp/chaincode -ccl javascript
 
 # Verify chaincode deployment
 docker logs peer0.org1.example.com | grep -i "basic"
@@ -39,7 +41,7 @@ docker logs peer0.org1.example.com | grep -i "basic"
 # User1 is created automatically when network starts with -ca flag
 # Gateway API uses this identity directly (no wallet needed)
 
-cd /home/ham/Documents/PROJECTS/Momentum\ Labs/branchchain-mvp
+cd branchchain-mvp
 
 # Verify User1 identity exists
 ls -la fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/
@@ -112,7 +114,7 @@ curl http://localhost:4000/api/audit/CREATE_ACCOUNT_1234567890123
 # Step 8: Verify Ledger Integration
 # ========================================
 
-cd /home/ham/Documents/PROJECTS/Momentum\ Labs/branchchain-mvp/fabric-samples/test-network
+cd branchchain-mvp/fabric-samples/test-network
 
 # Set environment for Org1
 export CORE_PEER_LOCALMSPID="Org1MSP"
@@ -133,7 +135,7 @@ peer chaincode query \
 # Stop backend (Press Ctrl+C in terminal where backend is running)
 
 # Stop Fabric network
-cd /home/ham/Documents/PROJECTS/Momentum\ Labs/branchchain-mvp/fabric-samples/test-network
+cd branchchain-mvp/fabric-samples/test-network
 ./network.sh down
 
 # ========================================
@@ -163,8 +165,8 @@ cd /home/ham/Documents/PROJECTS/Momentum\ Labs/branchchain-mvp/fabric-samples/te
 # ========================================
 
 # Start everything:
-cd /home/ham/Documents/PROJECTS/Momentum\ Labs/branchchain-mvp/fabric-samples/test-network && ./network.sh up createChannel -ca && ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go && cd ../../backend && npm install && npm start
+cd branchchain-mvp/fabric-samples/test-network && ./network.sh up createChannel -ca && ./network.sh deployCC -ccn basic -ccp ../../branchchain-mvp/chaincode -ccl javascript && cd ../../backend && npm install && npm start
 
 # Stop everything:
 # Ctrl+C (backend)
-# cd /home/ham/Documents/PROJECTS/Momentum\ Labs/branchchain-mvp/fabric-samples/test-network && ./network.sh down
+# cd branchchain-mvp/fabric-samples/test-network && ./network.sh down
