@@ -1,0 +1,16 @@
+{
+  "name": "branchchain-chaincode",
+  "version": "1.0.0",
+  "description": "BranchChain smart contract for Hyperledger Fabric",
+  "main": "index.js",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "start": "fabric-chaincode-node start"
+  },
+  "dependencies": {
+    "fabric-contract-api": "^2.5.0",
+    "fabric-shim": "^2.5.0"
+  }
+}

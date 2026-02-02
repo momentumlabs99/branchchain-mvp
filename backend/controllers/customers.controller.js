@@ -1,5 +1,5 @@
 const customersService = require("../services/customers.service");
-const ledgerService = require("../services/ledger.service");
+const ledgerService = require("../services/ledger-gateway.service");
 const { success, error } = require("../utils/response.util");
 
 /**
@@ -27,15 +27,15 @@ async function createCustomer(req, res) {
     });
 
     // Record to ledger
-    //await ledgerService.recordTransaction("CREATE_CUSTOMER", {
-    //  customerId: customer.id,
-    //  customerName: `${firstName} ${lastName}`,
-    //  email,
-    //  staffId: req.user.id,
-    //  branchId,
-    //});
+    await ledgerService.recordTransaction("CREATE_CUSTOMER", {
+      customerId: customer.id,
+      customerName: `${firstName} ${lastName}`,
+      email,
+      staffId: req.user.id,
+      branchId,
+    });
 
-    //return success(res, customer, 201);
+    return success(res, customer, 201);
 
   } catch (err) {
     return error(res, err.message, 500);

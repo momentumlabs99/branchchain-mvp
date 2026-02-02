@@ -73,10 +73,51 @@ async function searchByAccountNumber(accountNumber) {
   return getAccountById(accountNumber);
 }
 
+/**
+ * Transfer funds between two accounts
+ * @param {string} fromAccountId 
+ * @param {string} toAccountId 
+ * @param {number} amount 
+ * @returns {Promise<object>} Transfer result
+ */
+async function transferFunds(fromAccountId, toAccountId, amount) {
+  // 1. Get both accounts
+  const fromAccount = await dbService.findById("accounts", fromAccountId);
+  const toAccount = await dbService.findById("accounts", toAccountId);
+
+  if (!fromAccount) throw new Error(`Source account ${fromAccountId} not found`);
+  if (!toAccount) throw new Error(`Destination account ${toAccountId} not found`);
+
+  // 2. Check balance
+  const currentFromBalance = parseFloat(fromAccount.balance || 0);
+  const currentToBalance = parseFloat(toAccount.balance || 0);
+  const transferAmount = parseFloat(amount);
+
+  if (currentFromBalance < transferAmount) {
+    throw new Error("Insufficient funds in source account");
+  }
+
+  // 3. Update balances
+  const newFromBalance = currentFromBalance - transferAmount;
+  const newToBalance = currentToBalance + transferAmount;
+
+  await dbService.update("accounts", fromAccountId, { balance: newFromBalance });
+  await dbService.update("accounts", toAccountId, { balance: newToBalance });
+
+  return {
+    fromAccountId,
+    toAccountId,
+    amount: transferAmount,
+    newFromBalance,
+    newToBalance
+  };
+}
+
 module.exports = {
   createAccount,
   resetPin,
   getAccountById,
   getAllAccounts,
   searchByAccountNumber,
+  transferFunds,
 };

@@ -1,7 +1,7 @@
 {
   "name": "branchchain-backend",
-  "version": "1.0.0",
-  "description": "BranchChain MVP - Backend API",
+  "version": "2.0.0",
+  "description": "BranchChain MVP - Backend API with Fabric Gateway API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -11,18 +11,28 @@
     "hyperledger",
     "fabric",
     "banking",
-    "blockchain"
+    "blockchain",
+    "gateway-api",
+    "ledger",
+    "audit-trail"
   ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@grpc/grpc-js": "^1.10.0",
+    "@hyperledger/fabric-gateway": "^1.4.0",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^4.18.2",
-    "fabric-ca-client": "^2.2.0",
-    "fabric-network": "^2.2.0",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "nano": "^11.0.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
   }
 }

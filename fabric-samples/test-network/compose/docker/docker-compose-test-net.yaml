@@ -12,7 +12,7 @@ services:
   # -----------------------------
   peer0.org1.example.com:
     container_name: peer0.org1.example.com
-    image: hyperledger/fabric-peer:2.5.9
+    image: hyperledger/fabric-peer:2.5.14
     labels:
       service: hyperledger-fabric
     environment:
@@ -24,7 +24,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=adminpw
     volumes:
       - ./docker/peercfg:/etc/hyperledger/peercfg
-      - ${DOCKER_SOCK}:/host/var/run/docker.sock
+      - /var/run/docker.sock:/host/var/run/docker.sock
     networks:
       - fabric_test
 
@@ -33,7 +33,7 @@ services:
   # -----------------------------
   peer0.org2.example.com:
     container_name: peer0.org2.example.com
-    image: hyperledger/fabric-peer:2.5.9
+    image: hyperledger/fabric-peer:2.5.14
     labels:
       service: hyperledger-fabric
     environment:
@@ -45,7 +45,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=adminpw
     volumes:
       - ./docker/peercfg:/etc/hyperledger/peercfg
-      - ${DOCKER_SOCK}:/host/var/run/docker.sock
+      - /var/run/docker.sock:/host/var/run/docker.sock
     networks:
       - fabric_test
 
@@ -86,7 +86,7 @@ services:
   # -----------------------------
   orderer.example.com:
     container_name: orderer.example.com
-    image: hyperledger/fabric-orderer:2.5.9
+    image: hyperledger/fabric-orderer:2.5.14
     environment:
       - ORDERER_GENERAL_LOGLEVEL=info
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
