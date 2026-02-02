@@ -26,6 +26,7 @@ async function newGrpcConnection() {
     tlsCredentials,
     {
       'grpc.ssl_target_name_override': config.peerHostAlias,
+      'grpc.default_authority': config.peerHostAlias,
     }
   );
 }
@@ -184,42 +185,12 @@ async function queryTransactionById(txId) {
   }
 }
 
-/**
- * Update existing transaction (write operation)
- * @param {string} assetId - Asset/Transaction ID
- * @param {object} updates - Fields to update
- * @returns {Promise<void>}
- */
-async function updateTransaction(assetId, updates) {
-  const contract = await getContract();
-  
-  try {
-    console.log(`--> Submit Transaction: UpdateAsset for ${assetId}`);
-    await contract.submitTransaction(
-      'UpdateAsset',
-      assetId,
-      updates.color || 'yellow',
-      updates.size || '5',
-      updates.owner || 'system',
-      updates.appraisedValue || '0'
-    );
-
-    console.log('*** Transaction committed successfully');
-
-  } finally {
-    // Always cleanup connections
-    if (contract._gateway) {
-      contract._gateway.close();
-    }
-    if (contract._client) {
-      contract._client.close();
-    }
-  }
-}
+// Note: Update functionality not supported by the current chaincode design
+// All operations are recorded as immutable transactions on the ledger
 
 module.exports = {
   recordTransaction,
   queryTransactions,
   queryTransactionById,
-  updateTransaction,
+  // Note: Update functionality not supported - all operations are immutable on the ledger
 };

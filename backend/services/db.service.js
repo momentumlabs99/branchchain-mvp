@@ -1,8 +1,11 @@
 const nano = require("nano");
 const config = require("../config/fabric.config");
 
-// Initialize Nano with CouchDB URL
+// Initialize Nano with primary CouchDB URL
 const couch = nano(config.couchdb.url);
+
+// Initialize Nano with secondary CouchDB URL (for other organization)
+const couch2 = nano(config.couchdb.url2);
 
 // Reference to databases
 const dbs = {
@@ -12,19 +15,43 @@ const dbs = {
 };
 
 /**
- * Initialize databases (create if not exist)
+ * Initialize databases (create if not exist) on a specific CouchDB instance
+ * @param {object} nanoInstance - Nano instance
+ * @param {string} instanceLabel - Label for logging (e.g., "Org1" or "Org2")
  */
-async function initDbs() {
+async function initDbsForInstance(nanoInstance, instanceLabel) {
   for (const dbName of Object.values(config.couchdb.databases)) {
     try {
-      await couch.db.create(dbName);
-      console.log(`Database '${dbName}' created.`);
+      await nanoInstance.db.create(dbName);
+      console.log(`Database '${dbName}' created on ${instanceLabel} CouchDB.`);
     } catch (err) {
       if (err.error !== "file_exists") {
-        console.error(`Error creating database '${dbName}':`, err.message);
+        console.error(`Error creating database '${dbName}' on ${instanceLabel}:`, err.message);
       }
     }
   }
+}
+
+/**
+ * Initialize databases on both CouchDB instances
+ */
+async function initDbs() {
+  // Get instance labels based on port
+  const getInstanceLabel = (url) => {
+    if (url.includes(":5984")) return "Org1 (port 5984)";
+    if (url.includes(":6984")) return "Org2 (port 6984)";
+    return "Unknown";
+  };
+
+  console.log("Initializing databases on both CouchDB instances...");
+  
+  // Initialize on primary CouchDB
+  await initDbsForInstance(couch, getInstanceLabel(config.couchdb.url));
+  
+  // Initialize on secondary CouchDB
+  await initDbsForInstance(couch2, getInstanceLabel(config.couchdb.url2));
+  
+  console.log("Database initialization complete for both organizations.");
 }
 
 // Initialize databases on startup

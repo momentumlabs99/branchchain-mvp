@@ -1,9 +1,13 @@
 require("dotenv").config();
+const path = require("path");
 
 module.exports = {
   // CouchDB Configuration
   couchdb: {
+    // Primary CouchDB URL (for the organization the backend is configured for)
     url: process.env.COUCHDB_URL || "http://admin:adminpw@localhost:5984",
+    // Secondary CouchDB URL (for the other organization to ensure data replication)
+    url2: process.env.COUCHDB_URL2 || "http://admin:adminpw@localhost:6984",
     databases: {
       accounts: "accounts",
       cards: "cards",
@@ -12,8 +16,12 @@ module.exports = {
   },
 
   // Network configuration
-  channelName: process.env.CHANNEL_NAME || "mychannel",
-  chaincodeName: process.env.CHAINCODE_NAME || "basic",
+  // Based on deployment in CHAINCODE_DEPLOYMENT_SOLUTION.md:
+  // - Channel: test2
+  // - Chaincode: branchchain (custom banking chaincode) or basic (asset transfer)
+  // - Package ID: branchchain_1.0:ddc67f950a3353364d596b5bbd42700251001306a7bed343806e8be7d1c1ea94
+  channelName: process.env.CHANNEL_NAME || "test3",
+  chaincodeName: process.env.CHAINCODE_NAME || "branchchain",
 
   // Organization identity
   mspId: process.env.MSP_ID || "Org1MSP",

@@ -26,7 +26,7 @@ class BranchChainContract extends Contract {
      * @param {String} data JSON string containing operation details
      */
     async RecordOperation(ctx, actionType, data) {
-        const txId = ctx.stub.getTxId();
+        const txId = ctx.stub.getTxID();
         const timestamp = ctx.stub.getTxTimestamp();
         const date = new Date(timestamp.seconds * 1000).toISOString();
 

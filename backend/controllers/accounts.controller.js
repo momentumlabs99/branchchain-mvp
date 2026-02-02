@@ -125,10 +125,48 @@ async function searchAccount(req, res) {
   }
 }
 
+/**
+ * Transfer funds between accounts
+ */
+async function transferFunds(req, res) {
+  try {
+    const { fromAccountId, toAccountId, amount, staffId, branchId } = req.body;
+
+    // Validate input
+    if (!fromAccountId || !toAccountId || !amount || !staffId || !branchId) {
+      return error(res, "Missing required fields", 400);
+    }
+
+    // Perform transfer in database
+    const result = await accountsService.transferFunds(fromAccountId, toAccountId, amount);
+
+    // Record to ledger using Gateway API
+    const transactionId = await ledgerService.recordTransaction("TRANSFER_FUNDS", {
+      fromAccountId,
+      toAccountId,
+      amount,
+      staffId,
+      branchId,
+      timestamp: new Date().toISOString(),
+    });
+
+    return success(res, {
+      message: "Transfer successful",
+      result,
+      transactionId,
+    });
+
+  } catch (err) {
+    console.error('Error in transferFunds:', err);
+    return error(res, err.message, 500);
+  }
+}
+
 module.exports = {
   createAccount,
   resetPin,
   getAccount,
   getAllAccounts,
   searchAccount,
+  transferFunds,
 };
