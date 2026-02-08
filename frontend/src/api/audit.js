@@ -1,0 +1,36 @@
+import axios from "axios";
+import API_URL from "./api";
+
+const auditApi = {
+  /**
+   * Fetch all audit logs from the ledger
+   * @returns {Promise<Array>} List of transactions
+   */
+  getAllLogs: async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/audit`);
+      // The backend returns { total: number, transactions: [] }
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching audit logs:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Fetch a single audit log by Transaction ID
+   * @param {string} txId 
+   * @returns {Promise<Object>} Transaction details
+   */
+  getLogById: async (txId) => {
+    try {
+      const response = await axios.get(`${API_URL}/api/audit/${txId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching audit log ${txId}:`, error);
+      throw error;
+    }
+  }
+};
+
+export default auditApi;
