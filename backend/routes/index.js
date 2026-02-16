@@ -6,18 +6,16 @@ const authRoutes = require("./auth.routes");
 const accountsRoutes = require("./accounts.routes");
 const auditRoutes = require("./audit.routes"); // ← New
 const customersRoutes = require("./customers.routes");
-// const cardsRoutes = require("./cards.routes");
+const cardsRoutes = require("./cards.routes");
 // const kycRoutes = require("./kyc.routes");
-// const auditRoutes = require("./audit.routes");
 
 // Mount routes
 router.use("/auth", authRoutes);
 router.use("/accounts", accountsRoutes);
 router.use("/audit", auditRoutes); // ← New
 router.use("/customers", customersRoutes);
-// router.use("/cards", cardsRoutes);
+router.use("/cards", cardsRoutes);
 // router.use("/kyc", kycRoutes);
-// router.use("/audit", auditRoutes);
 
 // Root endpoint
 router.get("/", (req, res) => {
