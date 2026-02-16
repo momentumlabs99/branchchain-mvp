@@ -52,4 +52,33 @@ async function login(req, res) {
   }
 }
 
-module.exports = { login };
+/**
+* Staff logout
+*/
+async function logout(req, res) {
+  try {
+    // Get staff information from JWT token (assuming middleware has decoded and attached staff info)
+    const staff = req.staff;
+    
+    if (!staff) {
+      return error(res, "No active session found", 401);
+    }
+
+    // Record logout to ledger
+    await ledgerService.recordTransaction("STAFF_LOGOUT", {
+      staffId: staff.id,
+      staffName: staff.name,
+      branchId: staff.branchId,
+    });
+
+    // Clear token on client side (handled on frontend)
+    // In a real implementation, you might want to add token to blacklist
+    
+    return success(res, { message: "Logged out successfully" });
+
+  } catch (err) {
+    return error(res, err.message, 500);
+  }
+}
+
+module.exports = { login, logout };

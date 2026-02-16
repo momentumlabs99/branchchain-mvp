@@ -22,7 +22,7 @@ async function createCustomer(req, res) {
       phone,
       dateOfBirth,
       address,
-      branchId,
+      branchId: req.user.branchId || branchId, // Use branch from JWT token, fallback to request body
       staffId: req.user.id, // From JWT token
     });
 
@@ -70,8 +70,52 @@ async function getAllCustomers(req, res) {
   }
 }
 
+/**
+ * Update customer KYC information
+ */
+async function updateCustomerKYC(req, res) {
+  try {
+    const { customerId } = req.params;
+    const { address, phone, email } = req.body;
+
+    // Validate required fields
+    if (!address || !phone || !email) {
+      return error(res, "Missing required fields", 400);
+    }
+
+    // Update customer KYC data
+    const updatedCustomer = await customersService.updateCustomerKYC(customerId, {
+      address,
+      phone,
+      email,
+      staffId: req.user.id, // From JWT token
+    });
+
+    // Record to ledger
+    await ledgerService.recordTransaction("UPDATE_KYC", {
+      customerId,
+      address,
+      phone,
+      email,
+      staffId: req.user.id,
+      branchId: req.user.branchId,
+      timestamp: new Date().toISOString(),
+    });
+
+    return success(res, {
+      message: "KYC update successful",
+      customer: updatedCustomer,
+    });
+
+  } catch (err) {
+    console.error('Error in updateCustomerKYC:', err);
+    return error(res, err.message, 500);
+  }
+}
+
 module.exports = {
   createCustomer,
   getCustomer,
   getAllCustomers,
+  updateCustomerKYC,
 };

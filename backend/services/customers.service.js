@@ -48,9 +48,38 @@ async function updateKycStatus(customerId, status) {
   });
 }
 
+/**
+ * Update customer KYC information
+ * @param {string} customerId - Customer ID
+ * @param {object} data - KYC update data
+ * @returns {Promise<object>} Updated customer
+ */
+async function updateCustomerKYC(customerId, data) {
+  const { address, phone, email, staffId } = data;
+  
+  // Get current customer data
+  const customer = await getCustomerById(customerId);
+  
+  // Update customer data
+  const updatedData = {
+    address: {
+      street: address?.street || customer.address.street,
+      city: address?.city || customer.address.city,
+      state: address?.state || customer.address.state,
+      zipCode: address?.zipCode || customer.address.zipCode,
+    },
+    phone,
+    email,
+    updatedAt: new Date().toISOString(),
+  };
+  
+  return dbService.update("customers", customerId, updatedData);
+}
+
 module.exports = {
   createCustomer,
   getCustomerById,
   getAllCustomers,
   updateKycStatus,
+  updateCustomerKYC,
 };
