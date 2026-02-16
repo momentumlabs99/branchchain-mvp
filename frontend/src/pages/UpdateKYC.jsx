@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AccountLookup from "../components/AccountLookup";
+import { updateCustomerKYC } from "../api/customers";
 
 const UpdateKYC = () => {
   const [searchAccount, setSearchAccount] = useState("");
@@ -28,10 +29,32 @@ const UpdateKYC = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log("Updating KYC:", formData);
-    setStatus("KYC information updated successfully");
-    // TODO: Call API to update KYC
+  const handleSubmit = async () => {
+    if (!formData.accountNumber) return;
+
+    try {
+      setStatus("Updating KYC information...");
+
+      if (!formData.customerId) {
+         throw new Error("Customer ID missing. Please search again.");
+      }
+
+      const result = await updateCustomerKYC(formData.customerId, {
+        email: formData.email,
+        phone: formData.phone,
+        address: {
+          street: formData.address,
+          city: formData.city,
+          state: formData.state,
+          zipCode: formData.zipCode
+        }
+      });
+
+      setStatus("Success: KYC information updated.");
+      // maintain success state or update local data
+    } catch (error) {
+      setStatus(`Error: ${error.message}`);
+    }
   };
 
   const handleReset = () => {
@@ -137,11 +160,13 @@ const UpdateKYC = () => {
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                     Email Address *
                   </label>
                   <input
                     type="email"
+                    id="email"
+                    data-testid="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
@@ -149,11 +174,13 @@ const UpdateKYC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
                     Phone Number *
                   </label>
                   <input
                     type="tel"
+                    id="phone"
+                    data-testid="phone"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
@@ -170,11 +197,13 @@ const UpdateKYC = () => {
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                     Street Address *
                   </label>
                   <input
                     type="text"
+                    id="address"
+                    data-testid="address"
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
@@ -183,11 +212,13 @@ const UpdateKYC = () => {
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
                       City *
                     </label>
                     <input
                       type="text"
+                      id="city"
+                      data-testid="city"
                       name="city"
                       value={formData.city}
                       onChange={handleInputChange}
@@ -195,10 +226,12 @@ const UpdateKYC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">
                       State *
                     </label>
                     <select
+                      id="state"
+                      data-testid="state"
                       name="state"
                       value={formData.state}
                       onChange={handleInputChange}
@@ -212,11 +245,13 @@ const UpdateKYC = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">
                       Zip Code *
                     </label>
                     <input
                       type="text"
+                      id="zipCode"
+                      data-testid="zipCode"
                       name="zipCode"
                       value={formData.zipCode}
                       onChange={handleInputChange}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AccountLookup from "../components/AccountLookup";
+import { replaceCard } from "../api/cards";
 
 const ReplaceCard = () => {
   const [searchAccount, setSearchAccount] = useState("");
@@ -20,21 +21,25 @@ const ReplaceCard = () => {
     // Handled by AccountLookup component
   };
 
-  const handleReplaceCard = () => {
+  const handleReplaceCard = async () => {
     if (!newCardSerial || !replacementReason) {
       setStatus("Please fill in all required fields");
       return;
     }
 
-    console.log("Replacing card:", {
-      accountNumber: currentCard.accountNumber,
-      oldCard: currentCard.cardNumber,
-      newCardSerial,
-      replacementReason,
-    });
+    try {
+      setStatus("Processing replacement...");
+      const result = await replaceCard({
+        accountId: currentCard.accountId,
+        oldCardNumber: currentCard.cardNumber,
+        newCardSerial,
+        reason: replacementReason,
+      });
 
-    setStatus("Card replaced successfully. Old card deactivated.");
-    // TODO: Call API to replace card
+      setStatus(`Success: Card replaced. Transaction ID: ${result.transactionId}`);
+    } catch (error) {
+       setStatus(`Error: ${error.message}`);
+    }
   };
 
   const handleReset = () => {
@@ -163,11 +168,13 @@ const ReplaceCard = () => {
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="newCardSerial" className="block text-sm font-medium text-gray-700 mb-1">
                     New Card Serial Number *
                   </label>
                   <input
                     type="text"
+                    id="newCardSerial"
+                    data-testid="new-card-serial"
                     value={newCardSerial}
                     onChange={(e) => setNewCardSerial(e.target.value)}
                     placeholder="Enter new card serial"
@@ -178,10 +185,12 @@ const ReplaceCard = () => {
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="replacementReason" className="block text-sm font-medium text-gray-700 mb-1">
                     Replacement Reason *
                   </label>
                   <select
+                    id="replacementReason"
+                    data-testid="replacement-reason"
                     value={replacementReason}
                     onChange={(e) => setReplacementReason(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"

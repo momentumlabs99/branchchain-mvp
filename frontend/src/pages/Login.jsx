@@ -137,6 +137,7 @@ const Login = () => {
                     type="text"
                     name="staffId"
                     id="staffId"
+                    data-testid="staffId"
                     value={formData.staffId}
                     onChange={handleInputChange}
                     placeholder="Ex: STF-8821"
@@ -163,6 +164,7 @@ const Login = () => {
                     type={showPassword ? "text" : "password"}
                     name="password"
                     id="password"
+                    data-testid="password"
                     value={formData.password}
                     onChange={handleInputChange}
                     placeholder="Enter secure phrase"
@@ -184,13 +186,7 @@ const Login = () => {
             {/* Actions */}
             <div className="flex items-center justify-end">
               <div className="text-sm">
-                <button
-                  type="button"
-                  className="font-medium text-primary hover:text-blue-500 hover:underline"
-                  onClick={() => console.log("Forgot password clicked")}
-                >
-                  Forgot password?
-                </button>
+                {/* Forgot password removed as per request */}
               </div>
             </div>
 
@@ -198,6 +194,7 @@ const Login = () => {
             <div>
               <button
                 type="submit"
+                data-testid="login-submit"
                 disabled={loading}
                 className="flex w-full justify-center rounded-md bg-primary px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >

@@ -26,7 +26,16 @@ export default async function login(data) {
 // LOGOUT
 export async function logout(navigate) {
   try {
-    await axios.post(`${API_URL}/api/auth/logout`);
+    const token = localStorage.getItem("token");
+    await axios.post(
+      `${API_URL}/api/auth/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -34,5 +43,9 @@ export async function logout(navigate) {
     navigate("/login");
   } catch (error) {
     console.error(error.response?.data || error.message);
+    // Force logout locally even if backend fails
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
   }
 }
