@@ -18,7 +18,16 @@ const Dashboard = () => {
             Overview
           </h2>
           <p className="text-[#616d89] text-sm lg:text-base">
-            Welcome back, John Doe.
+            Welcome back, {(() => {
+              try {
+                const user = JSON.parse(localStorage.getItem("user"));
+                return user && user.firstName
+                  ? `${user.firstName} ${user.lastName}`
+                  : "User";
+              } catch {
+                return "User";
+              }
+            })()}.
           </p>
         </div>
 

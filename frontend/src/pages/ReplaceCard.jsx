@@ -97,7 +97,7 @@ const ReplaceCard = () => {
       });
       console.log("Replace card result:", result);
 
-      setStatus("Card replaced successfully. Old card deactivated.");
+      setStatus(`Success: Card replaced. Transaction ID: ${result.transactionId || 'N/A'}`);
       // Reset form on success
       setNewCardSerial("");
       setReplacementReason("");
@@ -154,7 +154,7 @@ const ReplaceCard = () => {
         {status && (
           <div
             className={`p-4 border rounded text-sm ${
-              status.includes("success")
+              status.toLowerCase().includes("success")
                 ? "bg-green-50 border-green-200 text-green-800"
                 : "bg-red-50 border-red-200 text-red-800"
             }`}
@@ -302,11 +302,13 @@ const ReplaceCard = () => {
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="newCardSerial" className="block text-sm font-medium text-gray-700 mb-1">
                     New Card Serial Number *
                   </label>
                   <input
                     type="text"
+                    id="newCardSerial"
+                    data-testid="new-card-serial"
                     value={newCardSerial}
                     onChange={(e) => setNewCardSerial(e.target.value)}
                     placeholder="e.g., CS123456 (from the cards list above)"
@@ -317,10 +319,12 @@ const ReplaceCard = () => {
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="replacementReason" className="block text-sm font-medium text-gray-700 mb-1">
                     Replacement Reason *
                   </label>
                   <select
+                    id="replacementReason"
+                    data-testid="replacement-reason"
                     value={replacementReason}
                     onChange={(e) => setReplacementReason(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"

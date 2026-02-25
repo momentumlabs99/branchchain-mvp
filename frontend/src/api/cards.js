@@ -38,18 +38,32 @@ export async function getCardsByAccount(accountId) {
 export async function replaceCard(data) {
   try {
     const token = localStorage.getItem("token");
-    console.log("replaceCard API call with data:", data);
-    const res = await axios.post(`${API_URL}/api/cards/replace`, data, {
+    const user = JSON.parse(localStorage.getItem("user"));
+    
+    if (!token || !user) {
+      throw new Error("User not logged in");
+    }
+
+    const payload = {
+      ...data,
+      staffId: user.id,
+      branchId: user.branchId,
+    };
+
+    const res = await axios.post(`${API_URL}/api/cards/replace`, payload, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
+    
     console.log("replaceCard API response:", res.status, res.data);
-    return res.data;
+    return res.data.data;
   } catch (error) {
     console.error("replaceCard API error:", error);
     const message = error.response?.data?.error || "Card replacement failed";
     throw new Error(message);
   }
 }
+
+export default replaceCard;

@@ -44,3 +44,4 @@ frontend/package-lock.json
 *.log
 wallet/
 
+backend_todo.md

@@ -60,7 +60,7 @@ export async function updateCustomerKYC(customerId, data) {
       },
     });
 
-    return res.data;
+    return res.data.data;
   } catch (error) {
     const message = error.response?.data?.error || "Failed to update customer KYC";
     throw new Error(message);
