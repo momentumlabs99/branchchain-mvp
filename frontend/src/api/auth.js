@@ -27,23 +27,19 @@ export default async function login(data) {
 export async function logout(navigate) {
   try {
     const token = localStorage.getItem("token");
-    await axios.post(
-      `${API_URL}/api/auth/logout`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    await axios.post(`${API_URL}/api/auth/logout`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
     navigate("/login");
   } catch (error) {
-    console.error(error.response?.data || error.message);
-    // Force logout locally even if backend fails
+    console.error("Logout error:", error.response?.data || error.message);
+    // Still clear local storage and navigate even if API call fails
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/login");

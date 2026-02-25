@@ -24,6 +24,8 @@ const AccountLookup = ({
       const data = await searchAccount(value);
       // Transform the data to match expected structure
       const transformed = {
+        accountId: data.id,
+        customerId: data.customerId, // Include customerId for KYC updates
         name: `${data.customer.firstName} ${data.customer.lastName}`,
         accountType: data.accountType,
         status: data.status,
@@ -36,7 +38,9 @@ const AccountLookup = ({
         state: data.customer.address.state,
         zipCode: data.customer.address.zipCode,
         balance: `$${data.balance.toFixed(2)}`,
-        // Add other fields if needed, but not all are available
+        cardNumber: data.customer?.cardNumber || "", // For card replacement
+        expiryDate: data.customer?.expiryDate || "",
+        cardType: data.customer?.cardType || "",
       };
       onResult(transformed);
     } catch (err) {

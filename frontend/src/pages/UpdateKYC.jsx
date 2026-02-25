@@ -7,6 +7,7 @@ const UpdateKYC = () => {
   const [customerLoaded, setCustomerLoaded] = useState(false);
   const [formData, setFormData] = useState({
     accountNumber: "",
+    customerId: "",
     customerName: "",
     email: "",
     phone: "",
@@ -16,6 +17,7 @@ const UpdateKYC = () => {
     zipCode: "",
   });
   const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSearch = () => {
     // Handled by AccountLookup component
@@ -30,30 +32,35 @@ const UpdateKYC = () => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.accountNumber) return;
+    if (!formData.customerId) {
+      setStatus("Please search for a customer first");
+      return;
+    }
+
+    if (!formData.email || !formData.phone || !formData.address || !formData.city || !formData.state || !formData.zipCode) {
+      setStatus("Please fill in all required fields");
+      return;
+    }
+
+    setLoading(true);
+    setStatus("");
 
     try {
-      setStatus("Updating KYC information...");
-
-      if (!formData.customerId) {
-         throw new Error("Customer ID missing. Please search again.");
-      }
-
       const result = await updateCustomerKYC(formData.customerId, {
-        email: formData.email,
-        phone: formData.phone,
         address: {
           street: formData.address,
           city: formData.city,
           state: formData.state,
-          zipCode: formData.zipCode
-        }
+          zipCode: formData.zipCode,
+        },
+        phone: formData.phone,
+        email: formData.email,
       });
-
-      setStatus("Success: KYC information updated.");
-      // maintain success state or update local data
-    } catch (error) {
-      setStatus(`Error: ${error.message}`);
+      setStatus(`Success: KYC information updated.`);
+    } catch (err) {
+      setStatus(err.message || "Failed to update KYC information");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,6 +69,7 @@ const UpdateKYC = () => {
     setCustomerLoaded(false);
     setFormData({
       accountNumber: "",
+      customerId: "",
       customerName: "",
       email: "",
       phone: "",
@@ -90,7 +98,7 @@ const UpdateKYC = () => {
         {status && (
           <div
             className={`p-4 border rounded text-sm ${
-              status.includes("success")
+              status.toLowerCase().includes("success")
                 ? "bg-green-50 border-green-200 text-green-800"
                 : "bg-red-50 border-red-200 text-red-800"
             }`}
@@ -105,7 +113,17 @@ const UpdateKYC = () => {
           onChange={setSearchAccount}
           onResult={(result) => {
             if (result) {
-              setFormData(result);
+              setFormData({
+                accountNumber: result.accountNumber || "",
+                customerId: result.customerId || "",
+                customerName: result.customerName || "",
+                email: result.email || "",
+                phone: result.phone || "",
+                address: result.address || "",
+                city: result.city || "",
+                state: result.state || "",
+                zipCode: result.zipCode || "",
+              });
               setCustomerLoaded(true);
               setStatus("");
             } else {
@@ -272,9 +290,10 @@ const UpdateKYC = () => {
               </button>
               <button
                 onClick={handleSubmit}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                disabled={loading}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
               >
-                Update KYC
+                {loading ? "Updating..." : "Update KYC"}
               </button>
             </div>
           </div>

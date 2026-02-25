@@ -159,6 +159,30 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, currentPage }) => {
             </Link>
             <Link
               className={`group flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
+                currentPage === "manage-cards"
+                  ? "bg-primary/10 text-primary"
+                  : "text-[#616d89] hover:bg-[#f0f1f4] hover:text-[#111318]"
+              }`}
+              to="/manage-cards"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <span
+                className={`material-symbols-outlined ${
+                  currentPage === "manage-cards"
+                    ? "text-primary"
+                    : "text-[#616d89] group-hover:text-[#111318]"
+                }`}
+              >
+                manage_accounts
+              </span>
+              <span
+                className={`text-sm ${currentPage === "manage-cards" ? "font-semibold" : "font-medium"}`}
+              >
+                Manage Cards
+              </span>
+            </Link>
+            <Link
+              className={`group flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
                 currentPage === "audit-log"
                   ? "bg-primary/10 text-primary"
                   : "text-[#616d89] hover:bg-[#f0f1f4] hover:text-[#111318]"

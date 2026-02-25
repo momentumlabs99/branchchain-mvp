@@ -10,6 +10,7 @@ import CreateAccount from "./pages/CreateAccount";
 import ResetPin from "./pages/ResetPin";
 import ReplaceCard from "./pages/ReplaceCard";
 import UpdateKYC from "./pages/UpdateKYC";
+import ManageCards from "./pages/ManageCards";
 import AuditLog from "./pages/AuditLog";
 import Layout from "./components/Layout";
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/reset-pin" element={<ResetPin />} />
           <Route path="/replace-card" element={<ReplaceCard />} />
           <Route path="/update-kyc" element={<UpdateKYC />} />
+          <Route path="/manage-cards" element={<ManageCards />} />
           <Route path="/audit-log" element={<AuditLog />} />
         </Route>
       </Routes>
