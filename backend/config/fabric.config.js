@@ -20,7 +20,7 @@ module.exports = {
   // - Channel: test2
   // - Chaincode: branchchain (custom banking chaincode) or basic (asset transfer)
   // - Package ID: branchchain_1.0:ddc67f950a3353364d596b5bbd42700251001306a7bed343806e8be7d1c1ea94
-  channelName: process.env.CHANNEL_NAME || "test3",
+  channelName: process.env.CHANNEL_NAME || "test4",
   chaincodeName: process.env.CHAINCODE_NAME || "branchchain",
 
   // Organization identity
@@ -33,6 +33,6 @@ module.exports = {
   peerTlsCertPath: process.env.PEER_TLS_CERT_PATH || path.resolve(__dirname, "../../fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"),
 
   // Peer configuration
-  peerEndpoint: process.env.PEER_ENDPOINT || "localhost:7051",
-  peerHostAlias: process.env.PEER_HOST_ALIAS || "peer0.org1.example.com",
+  peerEndpoint: process.env.PEER_ENDPOINT || "localhost:9051",
+  peerHostAlias: process.env.PEER_HOST_ALIAS || "peer0.org2.example.com",
 };

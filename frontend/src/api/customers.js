@@ -49,3 +49,20 @@ export async function getAllCustomers() {
     throw new Error(message);
   }
 }
+
+export async function updateCustomerKYC(customerId, data) {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await axios.put(`${API_URL}/api/customers/${customerId}/kyc`, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.data;
+  } catch (error) {
+    const message = error.response?.data?.error || "Failed to update customer KYC";
+    throw new Error(message);
+  }
+}
